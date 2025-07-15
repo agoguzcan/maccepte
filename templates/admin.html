@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maç İşlemleri</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background-image: url('https://r4.wallpaperflare.com/wallpaper/366/282/325/field-sport-football-arsenal-wallpaper-b736eaf65b7ee9878dded5634d4792f5.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .football-header {
+            color: #fff;
+            text-shadow: 2px 2px 8px #222, 0 0 12px #007bff;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 32px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .nav-tabs .nav-link {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #007bff;
+            background: rgba(255,255,255,0.85);
+            border-radius: 12px 12px 0 0;
+            margin-right: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-tabs .nav-link.active, .nav-tabs .nav-link:hover {
+            background: #007bff;
+            color: #fff;
+        }
+        .table-football {
+            background: rgba(255,255,255,0.93);
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .table-football th, .table-football td {
+            vertical-align: middle;
+        }
+        .table-football th {
+            background: #007bff;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        .table-football ul {
+            padding-left: 18px;
+        }
+        .tab-content {
+            margin-top: 18px;
+        }
+        .btn-football {
+            background: linear-gradient(90deg, #007bff 60%, #00c851 100%);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            transition: transform 0.22s cubic-bezier(.4,2,.6,1), box-shadow 0.22s, background 0.18s;
+            cursor: pointer;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+        }
+        .btn-football:hover {
+            transform: scale(1.08) rotate(-2deg);
+            background: linear-gradient(90deg, #0056b3 60%, #009e3d 100%);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+        }
+        .form-section {
+            background: rgba(255,255,255,0.93);
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            padding: 24px 18px;
+            margin-bottom: 32px;
+            animation: fadeIn 0.7s;
+        }
+        label {
+            font-weight: 600;
+            color: #007bff;
+        }
+        .admin-info-bar {
+            position: absolute;
+            top: 24px;
+            right: 48px;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .admin-name {
+            background: rgba(255,255,255,0.92);
+            color: #007bff;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 7px 18px 7px 14px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .admin-role {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .admin-username {
+            font-weight: 500;
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 7px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background 0.18s, transform 0.18s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .logout-btn:hover {
+            background: #b30021;
+            transform: scale(1.08);
+        }
+    </style>
+    <script>
+        // Dinamik takım ve oyuncu alanları için
+        function updateFormFields() {
+            const teamCount = parseInt(document.getElementById('team_count').value) || 2;
+            const playerCount = parseInt(document.getElementById('player_count').value) || 1;
+            let html = '';
+            for (let t = 1; t <= teamCount; t++) {
+                html += `<div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-shield-alt"></i> Takım ${t} Adı</label>
+                    <input type="text" class="form-control" name="team${t}" required>
+                </div>`;
+                for (let p = 1; p <= playerCount; p++) {
+                    html += `<div class="col-md-6 mb-2">
+                        <label class="form-label"><i class="fas fa-user"></i> Takım ${t} Oyuncu ${p} Adı</label>
+                        <input type="text" class="form-control" name="player${t}_${p}" required>
+                    </div>`;
+                }
+            }
+            document.getElementById('teams-players').innerHTML = html;
+        }
+        window.addEventListener('DOMContentLoaded', function() {
+            updateFormFields();
+            document.getElementById('team_count').addEventListener('change', updateFormFields);
+            document.getElementById('player_count').addEventListener('change', updateFormFields);
+        });
+    </script>
+</head>
+<body>
+{% if g.current_admin %}
+<div class="admin-info-bar">
+    <span class="admin-name">
+        {% if g.current_admin.is_founder %}
+            <i class="fas fa-crown" style="color:gold"></i>
+        {% elif g.current_admin.is_super %}
+            <i class="fas fa-gavel" style="color:#8d5524"></i>
+        {% else %}
+            <i class="fas fa-sword" style="color:#007bff"></i>
+        {% endif %}
+        {{ g.current_admin.name or g.current_admin.username }}
+    </span>
+    <span class="admin-role">
+        {% if g.current_admin.is_founder %}
+            Kurucu
+        {% elif g.current_admin.is_super %}
+            Baş Admin
+        {% else %}
+            Admin
+        {% endif %}
+    </span>
+    <span class="admin-username">
+        Kullanıcı adı: {{ g.current_admin.username }}
+    </span>
+    <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
+        <button type="submit" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+        </button>
+    </form>
+</div>
+{% endif %}
+<div class="container mt-4">
+    {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.is_super) %}
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" href="#matches" data-bs-toggle="tab">
+                <i class="fas fa-futbol"></i> Maç İşlemleri
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('admin_manage') }}">
+                <i class="fas fa-users-cog"></i> Admin İşlemleri
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="#announcements" data-bs-toggle="tab">
+                <span style="font-size:1.3em;">📢</span> Duyurular
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="#photos" data-bs-toggle="tab">
+                <span style="font-size:1.3em;">📸</span> Fotoğraflar
+            </a>
+        </li>
+        {% if g.current_admin.is_founder %}
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('admin_about') }}">
+                <i class="fas fa-info-circle"></i> Hakkında
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('logs') }}">
+                <i class="fas fa-clipboard-list"></i> Loglar
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+    <div class="tab-content" id="adminTabsContent">
+        <div class="tab-pane fade show active" id="matches" role="tabpanel">
+            <div class="football-header">
+                <i class="fas fa-futbol"></i>
+                Maç İşlemleri
+            </div>
+            <div class="form-section mb-4">
+                <form method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="date" class="form-label"><i class="fas fa-calendar-alt"></i> Tarih</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="time" class="form-label"><i class="fas fa-clock"></i> Saat</label>
+                            <input type="time" class="form-control" id="time" name="time" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-users"></i> Takım Sayısı</label>
+                            <input type="number" class="form-control" id="team_count" name="team_count" min="2" max="8" value="{{ team_count }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><i class="fas fa-user-friends"></i> Takım Başına Oyuncu</label>
+                            <input type="number" class="form-control" id="player_count" name="player_count" min="1" max="11" value="{{ player_count }}">
+                        </div>
+                    </div>
+                    <div class="row" id="teams-players">
+                        <!-- Dinamik takım ve oyuncu alanları buraya gelecek -->
+                    </div>
+                    <button type="submit" name="form_type" value="add_match" class="btn-football mt-3">
+                        <i class="fas fa-plus-circle"></i> Maç Ekle
+                    </button>
+                </form>
+            </div>
+            <ul class="nav nav-tabs" id="groupTabs" role="tablist">
+                {% for g in groups %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{g.group_no}}" data-bs-toggle="tab" data-bs-target="#group-{{g.group_no}}" type="button" role="tab" aria-controls="group-{{g.group_no}}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                        <i class="fas fa-users"></i> Grup {{ g.group_no }}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="tab-content" id="groupTabsContent">
+                {% for g in groups %}
+                <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="group-{{g.group_no}}" role="tabpanel" aria-labelledby="tab-{{g.group_no}}">
+                    <table class="table table-bordered table-football">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Saat</th>
+                                <th>Takım 1</th>
+                                <th>Takım 1 Oyuncuları</th>
+                                <th>Takım 2</th>
+                                <th>Takım 2 Oyuncuları</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ g.date }}</td>
+                                <td>{{ g.time }}</td>
+                                <td><i class="fas fa-shield-alt text-success"></i> {{ g.team1 }}</td>
+                                <td>
+                                    <ul class="mb-0">
+                                    {% for p in g.t1_players %}
+                                        <li><i class="fas fa-user text-primary"></i> {{ p }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td><i class="fas fa-shield-alt text-danger"></i> {{ g.team2 }}</td>
+                                <td>
+                                    <ul class="mb-0">
+                                    {% for p in g.t2_players %}
+                                        <li><i class="fas fa-user text-warning"></i> {{ p }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('delete', id=g.match_id) }}" class="btn-football btn-sm" title="Sil">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                    <!-- Düzenle butonu -->
+                                    <button type="button" class="btn btn-warning btn-sm ms-1" data-bs-toggle="modal" data-bs-target="#editMatchModal{{ g.match_id }}">
+                                        <i class="fas fa-edit"></i> Düzenle
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Düzenle Modalı -->
+                    <div class="modal fade" id="editMatchModal{{ g.match_id }}" tabindex="-1" aria-labelledby="editMatchModalLabel{{ g.match_id }}" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <form method="post" action="{{ url_for('update_match', match_id=g.match_id) }}">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="editMatchModalLabel{{ g.match_id }}">Maçı Düzenle</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="mb-2">
+                                <label class="form-label">Tarih</label>
+                                <input type="date" name="edit_date" class="form-control" value="{{ g.date }}">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Saat</label>
+                                <input type="time" name="edit_time" class="form-control" value="{{ g.time }}">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Takım 1</label>
+                                <input type="text" name="edit_team1" class="form-control" value="{{ g.team1 }}">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Takım 1 Oyuncuları</label>
+                                {% for p in g.t1_players %}
+                                <input type="text" name="edit_t1_players" class="form-control mb-1" value="{{ p }}">
+                                {% endfor %}
+                                <input type="text" name="edit_t1_players" class="form-control mb-1" placeholder="Yeni oyuncu ekle">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Takım 2</label>
+                                <input type="text" name="edit_team2" class="form-control" value="{{ g.team2 }}">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Takım 2 Oyuncuları</label>
+                                {% for p in g.t2_players %}
+                                <input type="text" name="edit_t2_players" class="form-control mb-1" value="{{ p }}">
+                                {% endfor %}
+                                <input type="text" name="edit_t2_players" class="form-control mb-1" placeholder="Yeni oyuncu ekle">
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                            <button type="submit" class="btn btn-primary">Güncelle</button>
+                          </div>
+                        </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="tab-pane fade" id="announcements" role="tabpanel">
+            <div class="p-4" style="background:rgba(255,255,255,0.93); border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.13); margin-top:18px;">
+                <h4 class="mb-3"><span style="font-size:1.2em;">📢</span> Duyurular</h4>
+                {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.is_super) %}
+                <form method="post" action="{{ url_for('add_announcement') }}" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="announcement" class="form-control" placeholder="Yeni duyuru yaz..." required>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Ekle</button>
+                    </div>
+                </form>
+                {% if g.current_admin.is_founder %}
+                <form method="post" action="{{ url_for('delete_all_announcements') }}" class="mb-3">
+                    <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Tüm duyuruları silmek istediğinize emin misiniz?')">
+                        <i class="fas fa-trash"></i> Hepsini Sil
+                    </button>
+                </form>
+                {% endif %}
+                {% endif %}
+                <ul class="list-group">
+                    {% for a in announcements %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ a.text }}</span>
+                        {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.is_super) %}
+                        <form method="post" action="{{ url_for('delete_announcement', announcement_id=a.id) }}" style="display:inline;">
+                            <button type="submit" class="btn btn-outline-danger btn-sm ms-2" onclick="return confirm('Duyuruyu silmek istediğinize emin misiniz?')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </form>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="photos" role="tabpanel">
+            <div class="p-4" style="background:rgba(255,255,255,0.93); border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.13); margin-top:18px;">
+                <h4 class="mb-3"><span style="font-size:1.2em;">📸</span> Fotoğraflar</h4>
+                {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.is_super) %}
+                <form method="post" action="{{ url_for('add_photo') }}" class="mb-3" enctype="multipart/form-data">
+                    <div class="input-group mb-2">
+                        <input type="url" name="photo_url" class="form-control" placeholder="Fotoğraf URL'si girin...">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> URL ile Ekle</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="file" name="photo_file" accept="image/*" class="form-control" multiple>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Dosya Yükle</button>
+                    </div>
+                </form>
+                {% if g.current_admin.is_founder %}
+                <form method="post" action="{{ url_for('delete_all_photos') }}" class="mb-3">
+                    <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Tüm fotoğrafları silmek istediğinize emin misiniz?')">
+                        <i class="fas fa-trash"></i> Hepsini Sil
+                    </button>
+                </form>
+                {% endif %}
+                {% endif %}
+                <div class="row">
+                    {% for p in photos %}
+                    <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+                        <img src="{{ p.url }}" class="img-fluid rounded shadow mb-2" alt="Fotoğraf">
+                        {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.is_super) %}
+                        <form method="post" action="{{ url_for('delete_photo', photo_id=p.id) }}" style="width:100%;">
+                            <button type="submit" class="btn btn-outline-danger btn-sm w-100 mt-1" onclick="return confirm('Fotoğrafı silmek istediğinize emin misiniz?')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if total_photo_pages > 1 %}
+                <nav aria-label="Fotoğraf Sayfaları">
+                    <ul class="pagination justify-content-center mt-3">
+                        <li class="page-item {% if photo_page == 1 %}disabled{% endif %}">
+                            <a class="page-link photo-page-link" href="{{ url_for('admin', photo_page=photo_page-1) }}#photos" tabindex="-1">Önceki</a>
+                        </li>
+                        {% for i in range(1, total_photo_pages+1) %}
+                        <li class="page-item {% if i == photo_page %}active{% endif %}">
+                            <a class="page-link photo-page-link" href="{{ url_for('admin', photo_page=i) }}#photos">{{ i }}</a>
+                        </li>
+                        {% endfor %}
+                        <li class="page-item {% if photo_page == total_photo_pages %}disabled{% endif %}">
+                            <a class="page-link photo-page-link" href="{{ url_for('admin', photo_page=photo_page+1) }}#photos">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="mb-4">
+        <div class="card" style="max-width:600px;margin:auto;">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-comments"></i> Admin Chat
+                {% if g.current_admin and g.current_admin.is_founder %}
+                <form method="post" action="{{ url_for('admin_chat_delete_all') }}" style="display:inline;float:right;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tüm mesajları silmek istediğinize emin misiniz?')">
+                        <i class="fas fa-trash"></i> Hepsini Sil
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            <div class="card-body" id="chat-messages" style="max-height:350px;overflow-y:auto;">
+                {% for msg in chat_messages %}
+                <div class="d-flex align-items-center mb-2">
+                    <span class="badge bg-secondary me-2">
+                        {% if msg.role == "Kurucu" %}
+                            <i class="fas fa-crown" style="color:gold"></i>
+                        {% elif msg.role == "Baş Admin" %}
+                            <i class="fas fa-gavel" style="color:#8d5524"></i>
+                        {% else %}
+                            <i class="fas fa-sword" style="color:#007bff"></i>
+                        {% endif %}
+                        {{ msg.role }} - {{ msg.username }}
+                    </span>
+                    <span class="flex-grow-1">{{ msg.message }}</span>
+                    <span class="text-muted ms-2" style="font-size:0.92em;">
+                    {{ msg.timestamp.strftime('%Y-%m-%d %H:%M:%S') if msg.timestamp else '' }}
+                </span>
+                {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.id == msg.admin_id) %}
+                <form method="post" action="{{ url_for('admin_chat_delete', chat_id=msg.id) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger btn-sm ms-2" title="Mesajı Sil">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+                {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <form method="post" action="{{ url_for('admin_chat_send') }}" class="d-flex">
+                    <input type="text" name="chat_message" class="form-control me-2" placeholder="Mesaj yaz..." required>
+                    <button type="submit" class="btn btn-primary">Gönder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Chat kutusu her zaman en alta kaydırılsın
+    window.addEventListener('DOMContentLoaded', function() {
+        var chatBox = document.getElementById('chat-messages');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        // Fotoğraf sayfası linkine tıklanınca Photos sekmesini aktif yap
+        document.querySelectorAll('.photo-page-link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                localStorage.setItem('adminActiveTab', '#photos');
+            });
+        });
+        // Sekme tıklanınca aktif sekmeyi kaydet
+        document.querySelectorAll('#adminTabs .nav-link').forEach(function(tab) {
+            tab.addEventListener('shown.bs.tab', function(e) {
+                localStorage.setItem('adminActiveTab', e.target.getAttribute('href'));
+            });
+        });
+        // Sayfa yüklendiğinde en son aktif sekmeyi aç
+        var hash = window.location.hash;
+        var activeTab = localStorage.getItem('adminActiveTab');
+        if (activeTab && document.querySelector('a[href="' + activeTab + '"]')) {
+            var tab = document.querySelector('a[href="' + activeTab + '"]');
+            var tabTrigger = new bootstrap.Tab(tab);
+            tabTrigger.show();
+            // Eğer hash yoksa, hash'i de güncelle
+            if (!hash || hash !== activeTab) {
+                history.replaceState(null, null, activeTab);
+            }
+        } else if (hash && document.querySelector('a[href="' + hash + '"]')) {
+            var tab = document.querySelector('a[href="' + hash + '"]');
+            var tabTrigger = new bootstrap.Tab(tab);
+            tabTrigger.show();
+        }
+    });
+</script>
+</body>
+</html>

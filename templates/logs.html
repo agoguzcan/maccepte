@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loglar</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body style="background-image: url('https://r4.wallpaperflare.com/wallpaper/366/282/325/field-sport-football-arsenal-wallpaper-b736eaf65b7ee9878dded5634d4792f5.jpg'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
+{% if g.current_admin %}
+<div class="admin-info-bar">
+    <div class="container d-flex justify-content-between align-items-center py-2">
+        <div class="admin-details d-flex align-items-center">
+            <span class="badge bg-info text-dark p-2" style="font-size:1.1em;">
+                {{ g.current_admin.username }}
+            </span>
+            <span class="badge bg-light text-dark ms-2" style="font-size:1.1em;">
+                {{ 'Kurucu' if g.current_admin.is_founder else 'Admin' }}
+            </span>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-secondary">Çıkış Yap</a>
+    </div>
+</div>
+{% endif %}
+<div class="container mt-4">
+    {% if g.current_admin and g.current_admin.is_founder %}
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('admin') }}">
+                <i class="fas fa-futbol"></i> Maç İşlemleri
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('admin_manage') }}">
+                <i class="fas fa-users-cog"></i> Admin İşlemleri
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" href="{{ url_for('logs') }}">
+                <i class="fas fa-clipboard-list"></i> Loglar
+            </a>
+        </li>
+    </ul>
+    <form method="post" action="{{ url_for('delete_all_logs') }}">
+        <button type="submit" class="btn btn-danger mb-3" onclick="return confirm('Tüm logları silmek istediğinize emin misiniz?')">
+            <i class="fas fa-trash"></i> Hepsini Sil
+        </button>
+    </form>
+    {% endif %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Kullanıcı Adı</th>
+                <th>Başarılı mı?</th>
+                <th>Tarih ve Saat</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for att in attempts %}
+            <tr {% if not att.success %}class="table-danger"{% endif %}>
+                <td>{{ att.username }}</td>
+                <td>{% if att.success %}Evet{% else %}Hayır{% endif %}</td>
+                <td>{{ att.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('delete_log', log_id=att.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bu logu silmek istediğinize emin misiniz?')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('admin') }}" class="btn btn-secondary mt-3">Panele Dön</a>
+</div>
+</body>
+</html>

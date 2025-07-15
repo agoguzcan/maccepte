@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hakkında Kutusu Yönetimi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h3 class="mb-4"><i class="fas fa-info-circle text-primary"></i> Hakkında Kutusu Yönetimi</h3>
+    <form method="post">
+        <div class="mb-3">
+            <label for="about_title" class="form-label">Başlık</label>
+            <input type="text" class="form-control" id="about_title" name="about_title" value="{{ about.title if about else '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="about_content" class="form-label">İçerik</label>
+            <textarea class="form-control" id="about_content" name="about_content" rows="5" required>{{ about.content if about else '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Kaydet</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Ana Sayfaya Dön</a>
+    </form>
+</div>
+</body>
+</html>

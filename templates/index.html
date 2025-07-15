@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Takımlar Ve Maç Tarihleri</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background-image: url('https://r4.wallpaperflare.com/wallpaper/366/282/325/field-sport-football-arsenal-wallpaper-b736eaf65b7ee9878dded5634d4792f5.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .admin-info-bar {
+            position: absolute;
+            top: 24px;
+            right: 48px;
+            z-index: 101;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+        .admin-name {
+            background: rgba(255,255,255,0.92);
+            color: #007bff;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 7px 18px 7px 14px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .admin-role {
+            background: rgba(255,255,255,0.92);
+            color: #222;
+            font-weight: 500;
+            border-radius: 16px;
+            padding: 3px 14px 3px 10px;
+            font-size: 0.98rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .admin-username {
+            background: rgba(255,255,255,0.92);
+            color: #555;
+            font-weight: 400;
+            border-radius: 14px;
+            padding: 2px 12px 2px 10px;
+            font-size: 0.93rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .logout-btn {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 7px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: background 0.18s, transform 0.18s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .logout-btn:hover {
+            background: #b30021;
+            transform: scale(1.08);
+        }
+        .admin-login-btn {
+            position: absolute;
+            top: 32px;
+            right: 48px;
+            z-index: 100;
+            padding: 12px 28px;
+            background: linear-gradient(90deg, #007bff 60%, #00c851 100%);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            transition: transform 0.22s cubic-bezier(.4,2,.6,1), box-shadow 0.22s, background 0.18s;
+            cursor: pointer;
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-login-btn:hover {
+            transform: scale(1.12) rotate(-2deg);
+            background: linear-gradient(90deg, #0056b3 60%, #009e3d 100%);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+        }
+        .football-header {
+            color: #fff;
+            text-shadow: 2px 2px 8px #222, 0 0 12px #007bff;
+            font-size: 2.3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 32px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .nav-tabs .nav-link {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #007bff;
+            background: rgba(255,255,255,0.85);
+            border-radius: 12px 12px 0 0;
+            margin-right: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav-tabs .nav-link.active, .nav-tabs .nav-link:hover {
+            background: #007bff;
+            color: #fff;
+        }
+        .table-football {
+            background: rgba(255,255,255,0.93);
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .table-football th, .table-football td {
+            vertical-align: middle;
+        }
+        .table-football th {
+            background: #007bff;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        .table-football ul {
+            padding-left: 18px;
+        }
+        .tab-content {
+            margin-top: 18px;
+        }
+        .mc-logo-box {
+            background: rgba(30, 42, 70, 0.92); /* Lacivertimsi, arka planla uyumlu */
+            border-radius: 22px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            padding: 0;
+            min-width: 320px;
+            max-width: 420px;
+        }
+        .mc-logo-inner {
+            padding: 18px 44px;
+        }
+        .mc-logo-circle {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fffbe7 60%, #bfcfff 100%);
+            box-shadow: 0 2px 8px #2224;
+            font-size: 2.1rem;
+            font-weight: 900;
+            color: #1e2a46;
+            border: 3px solid #fffbe7;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .mc-logo-ball {
+            font-size: 2.1rem;
+            font-family: 'Segoe UI Emoji', 'Segoe UI', Arial, sans-serif;
+            color: #1e2a46;
+            text-shadow: 1px 1px 8px #fff, 0 0 8px #bfcfff;
+            line-height: 1;
+        }
+        .mc-logo-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 8px #1e2a46, 0 0 12px #bfcfff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        @media (max-width: 500px) {
+            .mc-logo-inner { padding: 10px 10px; }
+            .mc-logo-title { font-size: 1.3rem; }
+            .mc-logo-circle { width: 36px; height: 36px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+{% if g.current_admin %}
+<div class="admin-info-bar">
+    <span class="admin-name">
+        {% if g.current_admin.is_founder %}
+            <i class="fas fa-crown" style="color:gold"></i>
+        {% elif g.current_admin.is_super %}
+            <i class="fas fa-gavel" style="color:#8d5524"></i>
+        {% else %}
+            <i class="fas fa-sword" style="color:#007bff"></i>
+        {% endif %}
+        {{ g.current_admin.name or g.current_admin.username }}
+    </span>
+    <span class="admin-role">
+        {% if g.current_admin.is_founder %}
+            Kurucu
+        {% elif g.current_admin.is_super %}
+            Baş Admin
+        {% else %}
+            Admin
+        {% endif %}
+    </span>
+    <span class="admin-username">
+        Kullanıcı adı: {{ g.current_admin.username }}
+    </span>
+    <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
+        <button type="submit" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+        </button>
+    </form>
+</div>
+{% else %}
+<button class="admin-login-btn" onclick="window.location.href='/login'">
+    <i class="fas fa-user-shield"></i> Admin Giriş
+</button>
+{% endif %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-start mb-4">
+        <div class="mc-logo-box" style="padding:0;">
+            <div class="mc-logo-inner d-flex align-items-center justify-content-center">
+                <div class="mc-logo-circle d-flex align-items-center justify-content-center me-3">
+                    <span class="mc-logo-ball">⚽</span>
+                </div>
+                <span class="mc-logo-title">Maç Cepte</span>
+            </div>
+        </div>
+    </div>
+    <div class="football-header">
+        <i class="fas fa-futbol"></i>
+        Takımlar Ve Maç Tarihleri
+    </div>
+    {% if g.current_admin and (g.current_admin.is_founder or g.current_admin.is_super) %}
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('admin') }}">
+                <i class="fas fa-futbol"></i> Maç İşlemleri
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('admin_manage') }}">
+                <i class="fas fa-users-cog"></i> Admin İşlemleri
+            </a>
+        </li>
+        {% if g.current_admin.is_founder %}
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ url_for('logs') }}">
+                <i class="fas fa-clipboard-list"></i> Loglar
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+    <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-matches" data-bs-toggle="tab" data-bs-target="#matches" type="button" role="tab" aria-controls="matches" aria-selected="true">
+                <span style="font-size:1.3em;">⚽</span> Maçlar
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-announcements" data-bs-toggle="tab" data-bs-target="#announcements" type="button" role="tab" aria-controls="announcements" aria-selected="false">
+                <span style="font-size:1.3em;">📢</span> Duyurular
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-photos" data-bs-toggle="tab" data-bs-target="#photos" type="button" role="tab" aria-controls="photos" aria-selected="false">
+                <span style="font-size:1.3em;">📸</span> Fotoğraflar
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="mainTabsContent">
+        <div class="tab-pane fade show active" id="matches" role="tabpanel" aria-labelledby="tab-matches">
+            <!-- ...maçlar tabı (gruplar ve maçlar)... -->
+            <ul class="nav nav-tabs" id="groupTabs" role="tablist">
+                {% for g in groups %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{g.group_no}}" data-bs-toggle="tab" data-bs-target="#group-{{g.group_no}}" type="button" role="tab" aria-controls="group-{{g.group_no}}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                        <i class="fas fa-users"></i> Grup {{ g.group_no }}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="tab-content" id="groupTabsContent">
+                {% for g in groups %}
+                <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="group-{{g.group_no}}" role="tabpanel" aria-labelledby="tab-{{g.group_no}}">
+                    <table class="table table-bordered table-football">
+                        <thead>
+                            <tr>
+                                <th>Tarih</th>
+                                <th>Saat</th>
+                                <th>Takım 1</th>
+                                <th>Takım 1 Oyuncuları</th>
+                                <th>Takım 2</th>
+                                <th>Takım 2 Oyuncuları</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ g.date }}</td>
+                                <td>{{ g.time }}</td>
+                                <td><i class="fas fa-shield-alt text-success"></i> {{ g.team1 }}</td>
+                                <td>
+                                    <ul class="mb-0">
+                                    {% for p in g.t1_players %}
+                                        <li><i class="fas fa-user text-primary"></i> {{ p }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td><i class="fas fa-shield-alt text-danger"></i> {{ g.team2 }}</td>
+                                <td>
+                                    <ul class="mb-0">
+                                    {% for p in g.t2_players %}
+                                        <li><i class="fas fa-user text-warning"></i> {{ p }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="tab-pane fade" id="announcements" role="tabpanel" aria-labelledby="tab-announcements">
+            <div class="p-4" style="background:rgba(255,255,255,0.93); border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.13); margin-top:18px;">
+                <h4 class="mb-3"><span style="font-size:1.2em;">📢</span> Duyurular</h4>
+                <ul class="list-group">
+                    {% for a in announcements %}
+                    <li class="list-group-item">{{ a.text }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="tab-photos">
+            <div class="p-4" style="background:rgba(255,255,255,0.93); border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.13); margin-top:18px;">
+                <h4 class="mb-3"><span style="font-size:1.2em;">📸</span> Fotoğraflar</h4>
+                <div class="row">
+                    {% for p in photos %}
+                    <div class="col-md-4 mb-3 d-flex flex-column align-items-center">
+                        <img src="{{ p.url }}" class="img-fluid rounded shadow mb-2" alt="Fotoğraf">
+                        <a href="{{ p.url }}" download class="btn btn-outline-primary btn-sm" style="width:100%;">
+                            <i class="fas fa-download"></i> İndir
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if total_photo_pages > 1 %}
+                <nav aria-label="Fotoğraf Sayfaları">
+                    <ul class="pagination justify-content-center mt-3">
+                        <li class="page-item {% if photo_page == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('index', photo_page=photo_page-1) }}#photos" tabindex="-1">Önceki</a>
+                        </li>
+                        {% for i in range(1, total_photo_pages+1) %}
+                        <li class="page-item {% if i == photo_page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('index', photo_page=i) }}#photos">{{ i }}</a>
+                        </li>
+                        {% endfor %}
+                        <li class="page-item {% if photo_page == total_photo_pages %}disabled{% endif %}">
+                            <a class="page-link" href="{{ url_for('index', photo_page=photo_page+1) }}#photos">Sonraki</a>
+                        </li>
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% if about and about.visible and (about.title or about.content) %}
+    <div class="row justify-content-center mb-4 mt-5">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="background: linear-gradient(120deg, #f7fafc 80%, #e3f2fd 100%); border-radius: 22px;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-info-circle fa-2x text-primary me-2"></i>
+                        <h4 class="card-title mb-0" style="font-weight:700;">
+                            {{ about.title if about else "Hakkında" }}
+                        </h4>
+                        {% if g.current_admin and g.current_admin.is_founder %}
+                        <a href="{{ url_for('admin_about') }}" class="btn btn-outline-primary btn-sm ms-auto">Düzenle</a>
+                        {% endif %}
+                    </div>
+                    <p class="card-text" style="font-size:1.15em; color:#333;">
+                        {{ about.content if about else "Bu kutu kurucu tarafından yönetilebilir. İçeriği ve başlığı kurucu panelinden düzenleyebilirsiniz." }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Ana sayfa sekme konumunu koru
+    window.addEventListener('DOMContentLoaded', function() {
+        // Sekme tıklanınca aktif sekmeyi kaydet
+        document.querySelectorAll('#mainTabs .nav-link').forEach(function(tab) {
+            tab.addEventListener('shown.bs.tab', function(e) {
+                localStorage.setItem('mainActiveTab', e.target.getAttribute('href'));
+            });
+        });
+        // Sayfa yüklendiğinde en son aktif sekmeyi aç
+        var hash = window.location.hash;
+        var activeTab = localStorage.getItem('mainActiveTab');
+        if (activeTab && document.querySelector('button[data-bs-target="' + activeTab + '"]')) {
+            var tabBtn = document.querySelector('button[data-bs-target="' + activeTab + '"]');
+            var tabTrigger = new bootstrap.Tab(tabBtn);
+            tabTrigger.show();
+            if (!hash || hash !== activeTab) {
+                history.replaceState(null, null, activeTab);
+            }
+        } else if (hash && document.querySelector('button[data-bs-target="' + hash + '"]')) {
+            var tabBtn = document.querySelector('button[data-bs-target="' + hash + '"]');
+            var tabTrigger = new bootstrap.Tab(tabBtn);
+            tabTrigger.show();
+        }
+    });
+</script>
+</body>
+</html>
